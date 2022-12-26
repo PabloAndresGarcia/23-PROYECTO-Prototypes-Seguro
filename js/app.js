@@ -19,13 +19,13 @@ Seguro.prototype.cotizarSeguro = function (){
 
     switch(this.marca){
         case '1':
-            cantidad = base * 1.15
+            cantidad = base * 1.15;
             break;
         case '2':
-            cantidad = base * 1.05
+            cantidad = base * 1.05;
             break;
         case '3':
-            cantidad = base * 1.35
+            cantidad = base * 1.35;
             break;
         default:
         break;
@@ -92,6 +92,53 @@ UI.prototype.mostrarMensaje = (mensaje, tipo)=> {
     }, 3000)
 }
 
+UI.prototype.mostrarResultado = (total, seguro)=>{
+
+    const {marca, year, tipo} = seguro;
+
+    let textoMarca
+    switch(marca){
+        case'1':
+            textoMarca= 'Americano'
+            break;
+        case'2':
+            textoMarca= 'Asiatico'
+            break;
+        case'3':
+            textoMarca= 'Europeo'
+            break;
+        default:
+        break;
+    }
+
+ //crear resulktado
+
+
+ const div = document.createElement('div');
+ div.classList.add('mt-10');
+
+ div.innerHTML = `
+    <p class= "header">Tu Resumen</P>
+    <p class= "font-bold"> Marca: <span class="font-normal">  ${textoMarca} </span></P>
+    <p class= "font-bold"> Año: <span class="font-normal">  ${year} </span></P>
+    <p class= "font-bold"> Tipo: <span class="font-normal capitalize">  ${tipo} </span></P>    
+    <p class= "font-bold"> Total: <span class="font-normal"> $ ${total} </span></P>
+ `;
+    const resultadoDiv = document.querySelector ('#resultado');
+   
+
+    //MOstrar spinner
+     const spinner = document.querySelector ('#cargando');
+     spinner.style.display = 'block';
+
+     setTimeout(()=>{
+     spinner.style.display = 'none';
+     resultadoDiv.appendChild(div);
+    }, 3000)
+}
+
+
+
 //INSTANCIAR UI
 
 const ui = new UI();
@@ -103,7 +150,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 })
 
 EventListener();
-function addEventListener(){
+function EventListener(){
     const formulario = document.querySelector('#cotizar-seguro');
     formulario.addEventListener('submit', cotizarSeguro);
 }
@@ -125,13 +172,21 @@ function cotizarSeguro(e){
         ui.mostrarMensaje('Todos los campos son obligatorios, revisa y vuelve a probar', 'error');
     }  
         ui.mostrarMensaje('Cotizando...', 'exito');
+
+        //OCULTAR COTIZAXCIONES VIEJAS
+
+        const resultados = document.querySelector('#resultado div');
+        if (resultados !=null){
+            resultados.remove();
+        }
    
     //Instanciar el seguro
-    const seguro = new seguro (marca, year, tipo);
-    seguro.cotizarSeguro();
+    const seguro = new Seguro (marca, year, tipo);
+    const total = seguro.cotizarSeguro();
 
     // Utilizar el proto que va a cotizar
 
 
+    ui.mostrarResultado(total, seguro);
 
 }
